@@ -1,40 +1,27 @@
-# 🎵 Spotify to HomePod — Home Assistant Integration
+# Spotify Playlists — Voice Control for Home Assistant
 
-Stream Spotify directly to your Apple HomePod from Home Assistant, with full playback controls and real-time state sync.
+A [HACS](https://hacs.xyz) custom integration that lets up to three people start their favourite Spotify playlists on any HomePod by voice, via Home Assistant.
 
 ---
 
-## How it works
+## What it does
 
-```
-Spotify Cloud API
-      │
-      │  (playback state + stream URL)
-      ▼
-Home Assistant
-      │
-      │  RAOP/AirPlay over local network
-      ▼
-Apple HomePod
-```
-
-1. The integration polls the Spotify API every few seconds for the current playback state.
-2. When playback is active, it opens a RAOP (Remote Audio Output Protocol / AirPlay) session to your HomePod.
-3. `ffmpeg` is used to transcode the Spotify audio stream to PCM audio, which is packaged into RTP packets and sent directly to the HomePod over UDP.
-4. Volume, play/pause, skip, and seek controls are kept in sync between Spotify and the HomePod.
+- Configure **three people**, each with **three named Spotify playlists**
+- Configure up to **three HomePod targets** (any `media_player` entity)
+- Trigger playback by voice via **HA Assist** or **Siri Shortcuts**
+- Trigger playback from automations via the `spotify_playlists.play` service
+- Reconfigure everything from the HA UI — no YAML required
 
 ---
 
 ## Prerequisites
 
-| Requirement | Details |
+| Requirement | Notes |
 |---|---|
-| **Home Assistant** | 2023.x or newer |
-| **Spotify Premium** | Required for full-track streaming |
-| **Spotify Developer App** | Free — create at https://developer.spotify.com/dashboard |
-| **Apple HomePod** | Any model, on the same local network as HA |
-| **ffmpeg** | Usually pre-installed on HA OS / Supervised. Check with `ffmpeg -version` |
-| **Python packages** | `spotipy>=2.23.0` — installed automatically |
+| Home Assistant 2024.4+ | For `OptionsFlowWithReload` support |
+| HACS | For easy installation |
+| Spotify integration | The [official HA Spotify integration](https://www.home-assistant.io/integrations/spotify/) must be set up so your HomePods appear as `media_player` entities |
+| HomePod media player entities | Via the Spotify integration or AirPlay/HomeKit Controller |
 
 ---
 
@@ -43,123 +30,149 @@ Apple HomePod
 ### Option A — HACS (recommended)
 
 1. Open HACS → Integrations → ⋮ → Custom Repositories
-2. Add `https://github.com/your-repo/spotify-homepod` as an **Integration**
-3. Install **Spotify to HomePod**
+2. Add this repository URL as an **Integration**
+3. Install **Spotify Playlists**
 4. Restart Home Assistant
 
 ### Option B — Manual
 
 ```bash
-# From your Home Assistant config directory:
-mkdir -p custom_components/spotify_homepod
-cp -r /path/to/download/custom_components/spotify_homepod/* \
-       custom_components/spotify_homepod/
+cp -r custom_components/spotify_playlists \
+       /config/custom_components/spotify_playlists
 ```
 
 Restart Home Assistant.
 
 ---
 
-## Spotify Developer Setup
-
-1. Go to https://developer.spotify.com/dashboard and **Create an App**
-2. Note your **Client ID** and **Client Secret**
-3. Click **Edit Settings** → add a Redirect URI:
-   ```
-   http://localhost:8888/callback
-   ```
-   (Or use your HA URL, e.g. `http://homeassistant.local:8123/callback`)
-4. Save
-
----
-
-## Finding your HomePod's IP Address
-
-**Option 1 — Home app:**  
-Home → tap & hold the HomePod tile → Settings → scroll to find the IP
-
-**Option 2 — Router admin page:**  
-Look for a device named "HomePod" in your DHCP lease list.
-
-**Option 3 — Terminal (macOS):**
-```bash
-dns-sd -q HomePod.local
-```
-
-> 💡 **Tip:** Set a static IP or DHCP reservation for your HomePod so it never changes.
-
----
-
-## Configuration
+## Setup
 
 1. Go to **Settings → Integrations → + Add Integration**
-2. Search for **"Spotify to HomePod"**
-3. Fill in the form:
+2. Search for **Spotify Playlists**
+3. Work through the four setup screens:
 
-| Field | Description |
+| Screen | What to enter |
 |---|---|
-| Spotify Client ID | From your Developer app |
-| Spotify Client Secret | From your Developer app |
-| Spotify Redirect URI | Must match what you set in the Developer dashboard |
-| HomePod Device Name | Display name (e.g. `Living Room HomePod`) |
-| HomePod IP Address | Static IP of your HomePod |
-| Local Stream Port | Port for the internal stream server (default: `5050`) |
+| **Person 1** | Name (used in voice commands) + 3 playlist names + Spotify URIs |
+| **Person 2** | Same |
+| **Person 3** | Same |
+| **HomePod Targets** | Up to 3 HomePod names + their `media_player` entity IDs |
 
-4. You'll be directed to **authorize Spotify** — click the link, log in, then paste the redirect URL back into HA.
+To find a playlist's Spotify URI: open Spotify → right-click a playlist → Share → **Copy Spotify URI**. It looks like `spotify:playlist:37i9dQZF1DX0XUsuxWHRQd`.
 
----
-
-## Options (after setup)
-
-Go to the integration's **Configure** button to adjust:
-
-| Option | Default | Description |
-|---|---|---|
-| Poll interval | 3 sec | How often to check Spotify for state changes |
-| Stream quality | high | `low` (96 kbps), `medium` (160 kbps), `high` (320 kbps) |
-| Auto-play | on | Automatically start streaming when Spotify plays |
+To reconfigure later: **Settings → Integrations → Spotify Playlists → Configure**.
 
 ---
 
-## Media Player Controls
+## Voice Commands
 
-The integration creates a **media_player** entity (e.g. `media_player.spotify_living_room_homepod`) with:
+The integration registers a **Home Assistant Assist** intent (`SpotifyPlaylistPlay`). You also need to add a sentence definition file.
 
-- ▶️ Play / ⏸ Pause / ⏹ Stop  
-- ⏭ Next track / ⏮ Previous track  
-- 🔊 Volume control (synced to both Spotify and HomePod)  
-- ⏩ Seek / scrub  
-- 🔀 Shuffle toggle  
-- 🔁 Repeat (off / track / all)  
-- 🎵 Play media (accepts Spotify URIs: `spotify:track:...`, `spotify:playlist:...`, etc.)
+### Step 1 — Copy the sentences file
 
----
+Copy `custom_sentences/en/spotify_playlists.yaml` from this repo into your HA config directory:
 
-## Lovelace Example Card
-
-```yaml
-type: media-control
-entity: media_player.spotify_living_room_homepod
+```
+/config/custom_sentences/en/spotify_playlists.yaml
 ```
 
-Or with the mini-media-player card (HACS):
+Create the `custom_sentences/en/` directory if it doesn't exist.
+
+### Step 2 — Restart Home Assistant
+
+### Step 3 — Speak
+
+From any Assist-enabled device:
+
+| What you say | What happens |
+|---|---|
+| `Play Gary's Workout playlist on the Kitchen HomePod` | Plays Gary's "Workout" playlist on the kitchen HomePod |
+| `Play Gary's second playlist on the Living Room` | Plays Gary's second configured playlist in the living room |
+| `Start Alice's Chill playlist` | Plays Alice's "Chill" playlist on the first (default) HomePod |
+| `Play Bob's first playlist on the Bedroom HomePod` | Plays Bob's first playlist in the bedroom |
+
+Names are matched **case-insensitively with fuzzy matching**, so minor mispronunciations are handled.
+
+---
+
+## Strict voice matching (optional)
+
+For more reliable voice recognition, edit `spotify_playlists.yaml` to add a `lists:` section with your exact configured names. HA Assist will then only accept utterances that match your names precisely:
 
 ```yaml
-type: custom:mini-media-player
-entity: media_player.spotify_living_room_homepod
-artwork: cover
-hide:
-  power: true
+language: "en"
+intents:
+  SpotifyPlaylistPlay:
+    data:
+      - sentences:
+          - "(play|start|put on) {user}'s {playlist} [playlist] on [the] {target} [HomePod]"
+          - "(play|start|put on) {user}'s {playlist} [playlist]"
+lists:
+  user:
+    values:
+      - "Gary"
+      - "Alice"
+      - "Bob"
+  playlist:
+    values:
+      - "Workout"
+      - "Chill"
+      - "Morning"
+      - "Focus"
+      # ... add all your playlist names here
+  target:
+    values:
+      - "Kitchen"
+      - "Living Room"
+      - "Bedroom"
+```
+
+---
+
+## Voice on HomePods — Two Approaches
+
+HomePods use **Siri** as their native voice assistant, not HA Assist. Choose one of:
+
+### Approach A: HA Assist satellite near the HomePod
+
+Use a small always-on device (e.g. an ESPHome voice satellite or a Raspberry Pi with a microphone) running HA Assist next to the HomePod. Speak to the satellite; it routes to HA Assist; playback starts on the HomePod.
+
+### Approach B: Siri Shortcuts → HA Webhook (recommended for HomePods)
+
+1. In HA, create an automation triggered by **Webhook** (Settings → Automations → + → Trigger: Webhook)
+2. Set the action to call `spotify_playlists.play` with the desired user/playlist/target
+3. On iOS/macOS, create a **Siri Shortcut**:
+   - Action: **Get Contents of URL**
+   - URL: `https://<your-ha-url>/api/webhook/<webhook-id>`
+   - Method: POST
+   - Body type: JSON — e.g. `{"user": "Gary", "playlist": "Workout", "target": "Kitchen"}`
+4. Give the shortcut a phrase: **"Play Gary's workout"**
+5. Say it on any Apple device including HomePod: **"Hey Siri, play Gary's workout"**
+
+You can create one shortcut per person/playlist/room combination.
+
+---
+
+## `spotify_playlists.play` Service
+
+Use this service in automations and scripts:
+
+```yaml
+service: spotify_playlists.play
+data:
+  user: "Gary"
+  playlist: "Workout"   # name or "first" / "second" / "third"
+  target: "Kitchen"
 ```
 
 ---
 
 ## Automation Example
 
-Play a morning playlist on your HomePod every weekday:
+Play a morning playlist on a schedule:
 
 ```yaml
-alias: Morning Music
+alias: Gary's Morning Music
 trigger:
   - platform: time
     at: "07:30:00"
@@ -167,44 +180,30 @@ condition:
   - condition: time
     weekday: [mon, tue, wed, thu, fri]
 action:
-  - service: media_player.play_media
-    target:
-      entity_id: media_player.spotify_living_room_homepod
+  - service: spotify_playlists.play
     data:
-      media_content_id: "spotify:playlist:37i9dQZF1DX0XUsuxWHRQd"
-      media_content_type: music
+      user: "Gary"
+      playlist: "Morning"
+      target: "Kitchen"
 ```
 
 ---
 
 ## Troubleshooting
 
-**HomePod not reachable during setup**
-- Confirm the IP address is correct
-- Try using the hostname: `HomePod.local`
-- Make sure HA and HomePod are on the same subnet/VLAN
+**Voice command not recognised**
+- Confirm `custom_sentences/en/spotify_playlists.yaml` is in your HA config directory
+- Restart HA after adding the file
+- Try the strict `lists:` approach (see above)
 
-**No audio on HomePod**
-- Verify ffmpeg is installed: run `ffmpeg -version` in the HA terminal
-- Check the HA logs: Settings → System → Logs, filter by `spotify_homepod`
-- Make sure Spotify is actively playing on *some* device (the integration bridges it to HomePod)
+**Playlist doesn't play**
+- Confirm the media player entity ID is correct (Developer Tools → States, filter `media_player`)
+- Confirm the Spotify URI is correct — test with `media_player.play_media` directly
+- Check HA logs: Settings → System → Logs, filter by `spotify_playlists`
 
-**Authorization fails**
-- Double-check that the Redirect URI in the Spotify Developer dashboard exactly matches what you entered in HA (including `http://` vs `https://`)
-- Make sure your Spotify account has Premium
-
-**Stream cuts out**
-- Increase the poll interval to reduce API rate limiting
-- Check your local network for packet loss between HA and the HomePod
-
----
-
-## Technical Notes
-
-- **AirPlay version:** This integration uses RAOP (AirPlay 1), which is broadly compatible with all HomePod models.
-- **Audio path:** Spotify → Spotify Web API (stream URL) → ffmpeg (decode + re-encode PCM) → RTP/UDP → HomePod RAOP receiver
-- **No Apple Music required:** This uses the Spotify API only; no Apple account needed.
-- **Spotify Connect:** The integration does not use Spotify Connect (which would require Spotify's proprietary SDK). Instead it uses the public Web API.
+**Name not matched**
+- Names are fuzzy-matched; try to use the exact name you configured
+- Check spelling — e.g. "workout" vs "Workout" is fine (case-insensitive), but "workot" might not match
 
 ---
 

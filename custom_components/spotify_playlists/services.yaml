@@ -1,0 +1,29 @@
+play:
+  name: Play Spotify Playlist
+  description: >
+    Play a configured Spotify playlist for a user on a named HomePod target.
+    Names are matched case-insensitively with fuzzy matching.
+  fields:
+    user:
+      name: User
+      description: The configured user's name (e.g. "Gary")
+      required: true
+      example: "Gary"
+      selector:
+        text:
+    playlist:
+      name: Playlist
+      description: >
+        The configured playlist name (e.g. "Workout"), or an ordinal
+        ("first", "second", "third").
+      required: true
+      example: "Workout"
+      selector:
+        text:
+    target:
+      name: Target
+      description: The configured HomePod target name (e.g. "Kitchen")
+      required: true
+      example: "Kitchen"
+      selector:
+        text:

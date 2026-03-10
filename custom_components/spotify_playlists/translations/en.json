@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user_1": {
+        "title": "Person 1",
+        "description": "Configure the first person's name and their three Spotify playlists.",
+        "data": {
+          "name": "Name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_uri": "Playlist 1 — Spotify URI",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_uri": "Playlist 2 — Spotify URI",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_uri": "Playlist 3 — Spotify URI"
+        },
+        "data_description": {
+          "name": "The name used in voice commands, e.g. \"Gary\"",
+          "playlist_1_uri": "e.g. spotify:playlist:37i9dQZF1DX0XUsuxWHRQd",
+          "playlist_2_uri": "e.g. spotify:playlist:37i9dQZF1DX0XUsuxWHRQd",
+          "playlist_3_uri": "e.g. spotify:playlist:37i9dQZF1DX0XUsuxWHRQd"
+        }
+      },
+      "user_2": {
+        "title": "Person 2",
+        "description": "Configure the second person's name and their three Spotify playlists.",
+        "data": {
+          "name": "Name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_uri": "Playlist 1 — Spotify URI",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_uri": "Playlist 2 — Spotify URI",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_uri": "Playlist 3 — Spotify URI"
+        },
+        "data_description": {
+          "name": "The name used in voice commands, e.g. \"Alice\""
+        }
+      },
+      "user_3": {
+        "title": "Person 3",
+        "description": "Configure the third person's name and their three Spotify playlists.",
+        "data": {
+          "name": "Name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_uri": "Playlist 1 — Spotify URI",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_uri": "Playlist 2 — Spotify URI",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_uri": "Playlist 3 — Spotify URI"
+        },
+        "data_description": {
+          "name": "The name used in voice commands, e.g. \"Bob\""
+        }
+      },
+      "targets": {
+        "title": "HomePod Targets",
+        "description": "Configure the HomePods that playlists can be played on. Target 1 is the default when no HomePod is specified by voice. Targets 2 and 3 are optional.",
+        "data": {
+          "target_1_name": "HomePod 1 — name",
+          "target_1_entity": "HomePod 1 — media player entity",
+          "target_2_name": "HomePod 2 — name (optional)",
+          "target_2_entity": "HomePod 2 — media player entity (optional)",
+          "target_3_name": "HomePod 3 — name (optional)",
+          "target_3_entity": "HomePod 3 — media player entity (optional)"
+        },
+        "data_description": {
+          "target_1_name": "The name used in voice commands, e.g. \"Kitchen\"",
+          "target_2_name": "e.g. \"Living Room\"",
+          "target_3_name": "e.g. \"Bedroom\""
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "user_1": {
+        "title": "Edit Person 1",
+        "description": "Update Person 1's name and playlists.",
+        "data": {
+          "name": "Name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_uri": "Playlist 1 — Spotify URI",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_uri": "Playlist 2 — Spotify URI",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_uri": "Playlist 3 — Spotify URI"
+        }
+      },
+      "user_2": {
+        "title": "Edit Person 2",
+        "description": "Update Person 2's name and playlists.",
+        "data": {
+          "name": "Name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_uri": "Playlist 1 — Spotify URI",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_uri": "Playlist 2 — Spotify URI",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_uri": "Playlist 3 — Spotify URI"
+        }
+      },
+      "user_3": {
+        "title": "Edit Person 3",
+        "description": "Update Person 3's name and playlists.",
+        "data": {
+          "name": "Name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_uri": "Playlist 1 — Spotify URI",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_uri": "Playlist 2 — Spotify URI",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_uri": "Playlist 3 — Spotify URI"
+        }
+      },
+      "targets": {
+        "title": "Edit HomePod Targets",
+        "description": "Update your HomePod configuration.",
+        "data": {
+          "target_1_name": "HomePod 1 — name",
+          "target_1_entity": "HomePod 1 — media player entity",
+          "target_2_name": "HomePod 2 — name (optional)",
+          "target_2_entity": "HomePod 2 — media player entity (optional)",
+          "target_3_name": "HomePod 3 — name (optional)",
+          "target_3_entity": "HomePod 3 — media player entity (optional)"
+        }
+      }
+    },
+    "abort": {
+      "reconfigured": "Configuration saved and integration reloaded."
+    }
+  }
+}
