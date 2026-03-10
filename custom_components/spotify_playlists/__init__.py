@@ -4,12 +4,13 @@ from __future__ import annotations
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.helpers import config_validation as cv, intent
+import homeassistant.helpers.intent as ha_intent
+from homeassistant.helpers import config_validation as cv
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN, SERVICE_PLAY
 from .helpers import async_trigger_playback
-from .intent_handler import SpotifyPlaylistIntentHandler
+from .intent import SpotifyPlaylistIntentHandler
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
@@ -26,7 +27,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = data
 
     # Register the HA Assist intent handler with current config data
-    intent.async_register(hass, SpotifyPlaylistIntentHandler(data))
+    ha_intent.async_register(hass, SpotifyPlaylistIntentHandler(data))
 
     # Register the spotify_playlists.play service
     async def handle_play(call: ServiceCall) -> None:
