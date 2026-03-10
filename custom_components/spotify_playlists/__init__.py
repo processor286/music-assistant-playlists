@@ -9,7 +9,7 @@ from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN, SERVICE_PLAY
 from .helpers import async_trigger_playback
-from .intent import SpotifyPlaylistIntentHandler
+from .intent_handler import SpotifyPlaylistIntentHandler
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
