@@ -8,8 +8,8 @@ A [HACS](https://hacs.xyz) custom integration that lets up to three people start
 
 - Configure **three people**, each with **three named Spotify playlists**
 - Configure up to **three HomePod targets** (any `media_player` entity)
-- Trigger playback by voice via **HA Assist** or **Siri Shortcuts**
-- Trigger playback from automations via the `spotify_playlists.play` service
+- Trigger playback by voice via **HA Assist** or **Siri on HomePod**
+- Trigger playback from the **HA dashboard**, **automations**, or **Developer Tools**
 - Reconfigure everything from the HA UI — no YAML required
 
 ---
@@ -18,10 +18,9 @@ A [HACS](https://hacs.xyz) custom integration that lets up to three people start
 
 | Requirement | Notes |
 |---|---|
-| Home Assistant 2024.4+ | For `OptionsFlowWithReload` support |
+| Home Assistant 2024.4+ | |
 | HACS | For easy installation |
 | Spotify integration | The [official HA Spotify integration](https://www.home-assistant.io/integrations/spotify/) must be set up so your HomePods appear as `media_player` entities |
-| HomePod media player entities | Via the Spotify integration or AirPlay/HomeKit Controller |
 
 ---
 
@@ -36,9 +35,10 @@ A [HACS](https://hacs.xyz) custom integration that lets up to three people start
 
 ### Option B — Manual
 
-```bash
-cp -r custom_components/spotify_playlists \
-       /config/custom_components/spotify_playlists
+Copy the `custom_components/spotify_playlists` folder into your HA config directory:
+
+```
+/config/custom_components/spotify_playlists/
 ```
 
 Restart Home Assistant.
@@ -58,46 +58,104 @@ Restart Home Assistant.
 | **Person 3** | Same |
 | **HomePod Targets** | Up to 3 HomePod names + their `media_player` entity IDs |
 
-To find a playlist's Spotify URI: open Spotify → right-click a playlist → Share → **Copy Spotify URI**. It looks like `spotify:playlist:37i9dQZF1DX0XUsuxWHRQd`.
+**Finding a Spotify playlist URI:** open Spotify → right-click a playlist → Share → **Copy Spotify URI**
+It looks like: `spotify:playlist:37i9dQZF1DX0XUsuxWHRQd`
 
-To reconfigure later: **Settings → Integrations → Spotify Playlists → Configure**.
+**To reconfigure later:** Settings → Integrations → Spotify Playlists → **Configure**
 
 ---
 
-## Voice Commands
+## Starting a Playlist
 
-The integration registers a **Home Assistant Assist** intent (`SpotifyPlaylistPlay`). You also need to add a sentence definition file.
+### From the HA web interface (Dashboard)
 
-### Step 1 — Copy the sentences file
+The quickest way to trigger a playlist from the HA UI without setting up voice:
 
-Copy `custom_sentences/en/spotify_playlists.yaml` from this repo into your HA config directory:
+1. Go to **Settings → Developer Tools → Services**
+2. In the Service field select **spotify_playlists.play** (or type it)
+3. Switch to **YAML mode** and enter:
+
+```yaml
+service: spotify_playlists.play
+data:
+  user: "Gary"        # person's name as configured
+  playlist: "Workout" # playlist name, or "first" / "second" / "third"
+  target: "Kitchen"   # HomePod name as configured
+```
+
+4. Click **Call Service**
+
+You can also add a **Button card** to your dashboard that calls the service with fixed values — see the Dashboard Button section below.
+
+---
+
+### Dashboard Button card
+
+Add a one-tap play button to any HA dashboard:
+
+1. Edit your dashboard → **+ Add Card** → **Button**
+2. Switch to **YAML** and paste:
+
+```yaml
+type: button
+name: Gary — Workout
+icon: mdi:music
+tap_action:
+  action: perform-action
+  perform_action: spotify_playlists.play
+  data:
+    user: "Gary"
+    playlist: "Workout"
+    target: "Kitchen"
+```
+
+Create one button per person/playlist/room combination and arrange them in a grid card.
+
+---
+
+### Voice via HA Assist
+
+HA Assist is the built-in voice assistant. It works from the HA app, the web UI, and any configured voice satellite device.
+
+**Step 1 — Add the sentences file**
+
+Create the directory and file on your HA instance:
 
 ```
 /config/custom_sentences/en/spotify_playlists.yaml
 ```
 
-Create the `custom_sentences/en/` directory if it doesn't exist.
+Paste in this content:
 
-### Step 2 — Restart Home Assistant
+```yaml
+language: "en"
+intents:
+  SpotifyPlaylistPlay:
+    data:
+      - sentences:
+          - "(play|start|put on) {user}'s {playlist} [playlist] on [the] {target} [HomePod]"
+          - "(play|start|put on) {playlist} playlist for {user} on [the] {target} [HomePod]"
+          - "(play|start|put on) {user}'s {playlist} [playlist]"
+          - "(play|start|put on) {playlist} playlist for {user}"
+```
 
-### Step 3 — Speak
+**Step 2 — Restart Home Assistant**
 
-From any Assist-enabled device:
+**Step 3 — Open Assist and speak**
+
+Click the microphone icon in the top-right corner of HA, or press `a` on your keyboard.
 
 | What you say | What happens |
 |---|---|
-| `Play Gary's Workout playlist on the Kitchen HomePod` | Plays Gary's "Workout" playlist on the kitchen HomePod |
-| `Play Gary's second playlist on the Living Room` | Plays Gary's second configured playlist in the living room |
-| `Start Alice's Chill playlist` | Plays Alice's "Chill" playlist on the first (default) HomePod |
-| `Play Bob's first playlist on the Bedroom HomePod` | Plays Bob's first playlist in the bedroom |
+| `Play Gary's Workout playlist on the Kitchen HomePod` | Plays Gary's Workout on Kitchen HomePod |
+| `Play Gary's Workout on the Kitchen` | Same — "HomePod" is optional |
+| `Start Alice's Chill playlist` | Plays Alice's Chill on the first (default) HomePod |
+| `Play Bob's second playlist on the Bedroom` | Plays Bob's second configured playlist in the Bedroom |
+| `Put on Gary's Morning playlist for the Living Room` | Plays Gary's Morning in the Living Room |
 
-Names are matched **case-insensitively with fuzzy matching**, so minor mispronunciations are handled.
+Names are matched **case-insensitively with fuzzy matching**, so minor variations work.
 
----
-
-## Strict voice matching (optional)
-
-For more reliable voice recognition, edit `spotify_playlists.yaml` to add a `lists:` section with your exact configured names. HA Assist will then only accept utterances that match your names precisely:
+**Strict matching (optional):** For more reliable recognition, add a `lists:` block to the sentences file with your exact configured names:
 
 ```yaml
 language: "en"
@@ -118,8 +176,7 @@ lists:
       - "Workout"
       - "Chill"
       - "Morning"
-      - "Focus"
-      # ... add all your playlist names here
+      # add all your playlist names here
   target:
     values:
       - "Kitchen"
@@ -129,47 +186,52 @@ lists:
 
 ---
 
-## Voice on HomePods — Two Approaches
+### Voice via Siri on HomePod
 
-HomePods use **Siri** as their native voice assistant, not HA Assist. Choose one of:
+HomePods use Siri natively. The simplest approach is a **Siri Shortcut** that calls HA directly.
 
-### Approach A: HA Assist satellite near the HomePod
+**Step 1 — Get a Long-Lived Access Token**
 
-Use a small always-on device (e.g. an ESPHome voice satellite or a Raspberry Pi with a microphone) running HA Assist next to the HomePod. Speak to the satellite; it routes to HA Assist; playback starts on the HomePod.
+In HA: click your **profile picture** (bottom-left) → scroll to **Long-Lived Access Tokens** → **Create Token** → copy it.
 
-### Approach B: Siri Shortcuts → HA Webhook (recommended for HomePods)
+**Step 2 — Create a Siri Shortcut**
 
-1. In HA, create an automation triggered by **Webhook** (Settings → Automations → + → Trigger: Webhook)
-2. Set the action to call `spotify_playlists.play` with the desired user/playlist/target
-3. On iOS/macOS, create a **Siri Shortcut**:
-   - Action: **Get Contents of URL**
-   - URL: `https://<your-ha-url>/api/webhook/<webhook-id>`
-   - Method: POST
-   - Body type: JSON — e.g. `{"user": "Gary", "playlist": "Workout", "target": "Kitchen"}`
-4. Give the shortcut a phrase: **"Play Gary's workout"**
-5. Say it on any Apple device including HomePod: **"Hey Siri, play Gary's workout"**
+On your iPhone or iPad, open the **Shortcuts** app:
 
-You can create one shortcut per person/playlist/room combination.
+1. Tap **+** to create a new shortcut
+2. Tap **Add Action** → search for **Get Contents of URL**
+3. Configure the action:
+   - **URL:** `http://YOUR-HA-IP:8123/api/services/spotify_playlists/play`
+     (use your actual HA address — local IP or remote URL)
+   - **Method:** POST
+   - **Headers:** tap Add → Key: `Authorization`, Value: `Bearer YOUR-TOKEN-HERE`
+   - **Request Body:** JSON → tap Add → add three fields:
+     - `user` = `Gary`
+     - `playlist` = `Workout`
+     - `target` = `Kitchen`
+4. Tap the shortcut name at the top and rename it to something Siri-friendly, e.g. **"Play Gary's workout"**
+5. Tap **Done**
+
+**Step 3 — Trigger it**
+
+Say on any Apple device including HomePod:
+
+> **Hey Siri, play Gary's workout**
+
+Make one shortcut per person/playlist/room combination. Suggested naming conventions:
+
+| Shortcut name | Plays |
+|---|---|
+| `Play Gary's workout` | Gary → Workout → Kitchen |
+| `Play Gary's chill music` | Gary → Chill → Living Room |
+| `Play Alice's morning playlist` | Alice → Morning → Kitchen |
+| `Play bedroom music` | Gary → Evening → Bedroom |
 
 ---
 
-## `spotify_playlists.play` Service
+### From an Automation
 
-Use this service in automations and scripts:
-
-```yaml
-service: spotify_playlists.play
-data:
-  user: "Gary"
-  playlist: "Workout"   # name or "first" / "second" / "third"
-  target: "Kitchen"
-```
-
----
-
-## Automation Example
-
-Play a morning playlist on a schedule:
+Use the `spotify_playlists.play` service in any automation:
 
 ```yaml
 alias: Gary's Morning Music
@@ -187,23 +249,54 @@ action:
       target: "Kitchen"
 ```
 
+The `playlist` field accepts either the configured name or a position: `"first"`, `"second"`, `"third"`.
+
+---
+
+### From a Script
+
+```yaml
+alias: Play Chill in Living Room
+sequence:
+  - service: spotify_playlists.play
+    data:
+      user: "Alice"
+      playlist: "Chill"
+      target: "Living Room"
+```
+
+---
+
+## Reconfiguring
+
+To change names, playlists, or HomePod assignments at any time:
+
+**Settings → Integrations → Spotify Playlists → Configure**
+
+This walks through the same four screens pre-filled with your current values. Changes take effect immediately on save.
+
 ---
 
 ## Troubleshooting
 
-**Voice command not recognised**
-- Confirm `custom_sentences/en/spotify_playlists.yaml` is in your HA config directory
-- Restart HA after adding the file
-- Try the strict `lists:` approach (see above)
-
 **Playlist doesn't play**
-- Confirm the media player entity ID is correct (Developer Tools → States, filter `media_player`)
-- Confirm the Spotify URI is correct — test with `media_player.play_media` directly
+- Check the media player entity is correct: Developer Tools → States, filter by `media_player`
+- Test the Spotify URI directly: Developer Tools → Services → `media_player.play_media` with `media_content_id: spotify:playlist:...` and `media_content_type: music`
 - Check HA logs: Settings → System → Logs, filter by `spotify_playlists`
 
+**Assist voice command not recognised**
+- Confirm `/config/custom_sentences/en/spotify_playlists.yaml` exists
+- Restart HA after adding or editing the file
+- Test in the Assist chat window first before trying voice
+
+**Siri Shortcut not working**
+- Test the shortcut by tapping it in the Shortcuts app first — errors appear there
+- Make sure the HA URL is reachable from your phone (try it in a browser)
+- Double-check the Authorization header value starts with `Bearer ` (with a space)
+
 **Name not matched**
-- Names are fuzzy-matched; try to use the exact name you configured
-- Check spelling — e.g. "workout" vs "Workout" is fine (case-insensitive), but "workot" might not match
+- Use the exact name you configured (case doesn't matter, but spelling does)
+- Try using position instead: `"first"`, `"second"`, or `"third"`
 
 ---
 

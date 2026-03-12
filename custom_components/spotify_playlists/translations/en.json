@@ -3,9 +3,10 @@
     "step": {
       "user_1": {
         "title": "Person 1",
-        "description": "Configure the first person's name and their three Spotify playlists.",
+        "description": "Configure the first person's name, their Spotify account, and three playlists.",
         "data": {
           "name": "Name",
+          "spotify_entity": "Spotify media player entity",
           "playlist_1_name": "Playlist 1 — display name",
           "playlist_1_uri": "Playlist 1 — Spotify URI",
           "playlist_2_name": "Playlist 2 — display name",
@@ -15,6 +16,7 @@
         },
         "data_description": {
           "name": "The name used in voice commands, e.g. \"Gary\"",
+          "spotify_entity": "Select this person's media_player.spotify_... entity from the official Spotify integration",
           "playlist_1_uri": "e.g. spotify:playlist:37i9dQZF1DX0XUsuxWHRQd",
           "playlist_2_uri": "e.g. spotify:playlist:37i9dQZF1DX0XUsuxWHRQd",
           "playlist_3_uri": "e.g. spotify:playlist:37i9dQZF1DX0XUsuxWHRQd"
@@ -22,9 +24,10 @@
       },
       "user_2": {
         "title": "Person 2",
-        "description": "Configure the second person's name and their three Spotify playlists.",
+        "description": "Configure the second person's name, their Spotify account, and three playlists.",
         "data": {
           "name": "Name",
+          "spotify_entity": "Spotify media player entity",
           "playlist_1_name": "Playlist 1 — display name",
           "playlist_1_uri": "Playlist 1 — Spotify URI",
           "playlist_2_name": "Playlist 2 — display name",
@@ -33,14 +36,16 @@
           "playlist_3_uri": "Playlist 3 — Spotify URI"
         },
         "data_description": {
-          "name": "The name used in voice commands, e.g. \"Alice\""
+          "name": "e.g. \"Alice\"",
+          "spotify_entity": "Select this person's media_player.spotify_... entity"
         }
       },
       "user_3": {
         "title": "Person 3",
-        "description": "Configure the third person's name and their three Spotify playlists.",
+        "description": "Configure the third person's name, their Spotify account, and three playlists.",
         "data": {
           "name": "Name",
+          "spotify_entity": "Spotify media player entity",
           "playlist_1_name": "Playlist 1 — display name",
           "playlist_1_uri": "Playlist 1 — Spotify URI",
           "playlist_2_name": "Playlist 2 — display name",
@@ -49,22 +54,24 @@
           "playlist_3_uri": "Playlist 3 — Spotify URI"
         },
         "data_description": {
-          "name": "The name used in voice commands, e.g. \"Bob\""
+          "name": "e.g. \"Bob\"",
+          "spotify_entity": "Select this person's media_player.spotify_... entity"
         }
       },
       "targets": {
         "title": "HomePod Targets",
-        "description": "Configure the HomePods that playlists can be played on. Target 1 is the default when no HomePod is specified by voice. Targets 2 and 3 are optional.",
+        "description": "Configure the HomePods playlists can be played on. Target 1 is the default when no HomePod is specified by voice. Targets 2 and 3 are optional.",
         "data": {
           "target_1_name": "HomePod 1 — name",
-          "target_1_entity": "HomePod 1 — media player entity",
+          "target_1_source": "HomePod 1 — Spotify source name",
           "target_2_name": "HomePod 2 — name (optional)",
-          "target_2_entity": "HomePod 2 — media player entity (optional)",
+          "target_2_source": "HomePod 2 — Spotify source name (optional)",
           "target_3_name": "HomePod 3 — name (optional)",
-          "target_3_entity": "HomePod 3 — media player entity (optional)"
+          "target_3_source": "HomePod 3 — Spotify source name (optional)"
         },
         "data_description": {
           "target_1_name": "The name used in voice commands, e.g. \"Kitchen\"",
+          "target_1_source": "The HomePod's name exactly as it appears in Spotify's device list",
           "target_2_name": "e.g. \"Living Room\"",
           "target_3_name": "e.g. \"Bedroom\""
         }
@@ -75,9 +82,10 @@
     "step": {
       "user_1": {
         "title": "Edit Person 1",
-        "description": "Update Person 1's name and playlists.",
+        "description": "Update Person 1's name, Spotify account, and playlists.",
         "data": {
           "name": "Name",
+          "spotify_entity": "Spotify media player entity",
           "playlist_1_name": "Playlist 1 — display name",
           "playlist_1_uri": "Playlist 1 — Spotify URI",
           "playlist_2_name": "Playlist 2 — display name",
@@ -88,9 +96,10 @@
       },
       "user_2": {
         "title": "Edit Person 2",
-        "description": "Update Person 2's name and playlists.",
+        "description": "Update Person 2's name, Spotify account, and playlists.",
         "data": {
           "name": "Name",
+          "spotify_entity": "Spotify media player entity",
           "playlist_1_name": "Playlist 1 — display name",
           "playlist_1_uri": "Playlist 1 — Spotify URI",
           "playlist_2_name": "Playlist 2 — display name",
@@ -101,9 +110,10 @@
       },
       "user_3": {
         "title": "Edit Person 3",
-        "description": "Update Person 3's name and playlists.",
+        "description": "Update Person 3's name, Spotify account, and playlists.",
         "data": {
           "name": "Name",
+          "spotify_entity": "Spotify media player entity",
           "playlist_1_name": "Playlist 1 — display name",
           "playlist_1_uri": "Playlist 1 — Spotify URI",
           "playlist_2_name": "Playlist 2 — display name",
@@ -117,11 +127,11 @@
         "description": "Update your HomePod configuration.",
         "data": {
           "target_1_name": "HomePod 1 — name",
-          "target_1_entity": "HomePod 1 — media player entity",
+          "target_1_source": "HomePod 1 — Spotify source name",
           "target_2_name": "HomePod 2 — name (optional)",
-          "target_2_entity": "HomePod 2 — media player entity (optional)",
+          "target_2_source": "HomePod 2 — Spotify source name (optional)",
           "target_3_name": "HomePod 3 — name (optional)",
-          "target_3_entity": "HomePod 3 — media player entity (optional)"
+          "target_3_source": "HomePod 3 — Spotify source name (optional)"
         }
       }
     },

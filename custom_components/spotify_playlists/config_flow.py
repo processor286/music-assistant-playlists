@@ -29,12 +29,13 @@ def _user_schema(defaults: dict[str, Any] | None = None) -> vol.Schema:
     return vol.Schema(
         {
             vol.Required("name", default=d.get("name", "")): _TEXT,
-            vol.Required("playlist_1_name", default=d.get("playlist_1_name", "")): _TEXT,
-            vol.Required("playlist_1_uri", default=d.get("playlist_1_uri", "")): _TEXT,
-            vol.Required("playlist_2_name", default=d.get("playlist_2_name", "")): _TEXT,
-            vol.Required("playlist_2_uri", default=d.get("playlist_2_uri", "")): _TEXT,
-            vol.Required("playlist_3_name", default=d.get("playlist_3_name", "")): _TEXT,
-            vol.Required("playlist_3_uri", default=d.get("playlist_3_uri", "")): _TEXT,
+            vol.Required("spotify_entity", default=d.get("spotify_entity", "")): _ENTITY_MP,
+            vol.Optional("playlist_1_name", default=d.get("playlist_1_name", "")): _TEXT,
+            vol.Optional("playlist_1_uri", default=d.get("playlist_1_uri", "")): _TEXT,
+            vol.Optional("playlist_2_name", default=d.get("playlist_2_name", "")): _TEXT,
+            vol.Optional("playlist_2_uri", default=d.get("playlist_2_uri", "")): _TEXT,
+            vol.Optional("playlist_3_name", default=d.get("playlist_3_name", "")): _TEXT,
+            vol.Optional("playlist_3_uri", default=d.get("playlist_3_uri", "")): _TEXT,
         }
     )
 
@@ -44,11 +45,11 @@ def _targets_schema(defaults: dict[str, Any] | None = None) -> vol.Schema:
     return vol.Schema(
         {
             vol.Required("target_1_name", default=d.get("target_1_name", "")): _TEXT,
-            vol.Required("target_1_entity", default=d.get("target_1_entity", "")): _ENTITY_MP,
-            vol.Required("target_2_name", default=d.get("target_2_name", "")): _TEXT,
-            vol.Optional("target_2_entity", default=d.get("target_2_entity", "")): _ENTITY_MP,
-            vol.Required("target_3_name", default=d.get("target_3_name", "")): _TEXT,
-            vol.Optional("target_3_entity", default=d.get("target_3_entity", "")): _ENTITY_MP,
+            vol.Required("target_1_source", default=d.get("target_1_source", "")): _TEXT,
+            vol.Optional("target_2_name", default=d.get("target_2_name", "")): _TEXT,
+            vol.Optional("target_2_source", default=d.get("target_2_source", "")): _TEXT,
+            vol.Optional("target_3_name", default=d.get("target_3_name", "")): _TEXT,
+            vol.Optional("target_3_source", default=d.get("target_3_source", "")): _TEXT,
         }
     )
 
@@ -60,6 +61,7 @@ def _targets_schema(defaults: dict[str, Any] | None = None) -> vol.Schema:
 def _user_dict_from_form(form: dict[str, Any]) -> dict[str, Any]:
     return {
         "name": form["name"].strip(),
+        "spotify_entity_id": form["spotify_entity"].strip(),
         "playlist_1_name": form["playlist_1_name"].strip(),
         "playlist_1_uri": form["playlist_1_uri"].strip(),
         "playlist_2_name": form["playlist_2_name"].strip(),
@@ -70,8 +72,11 @@ def _user_dict_from_form(form: dict[str, Any]) -> dict[str, Any]:
 
 
 def _user_dict_to_form(user: dict[str, Any]) -> dict[str, Any]:
-    """Flatten a stored user dict back to form field names (they match)."""
-    return dict(user)
+    """Flatten a stored user dict back to form field names."""
+    d = dict(user)
+    # stored as spotify_entity_id, form field is spotify_entity
+    d["spotify_entity"] = d.pop("spotify_entity_id", "")
+    return d
 
 
 def _assemble_entry_data(
@@ -80,9 +85,9 @@ def _assemble_entry_data(
     targets = []
     for n in (1, 2, 3):
         name = targets_form.get(f"target_{n}_name", "").strip()
-        entity = targets_form.get(f"target_{n}_entity", "").strip()
-        if name and entity:
-            targets.append({"name": name, "entity_id": entity})
+        source = targets_form.get(f"target_{n}_source", "").strip()
+        if name and source:
+            targets.append({"name": name, "source_name": source})
 
     return {
         "users": [
@@ -100,7 +105,7 @@ def _targets_form_from_data(data: dict[str, Any]) -> dict[str, Any]:
     flat: dict[str, Any] = {}
     for i, t in enumerate(targets[:3], start=1):
         flat[f"target_{i}_name"] = t.get("name", "")
-        flat[f"target_{i}_entity"] = t.get("entity_id", "")
+        flat[f"target_{i}_source"] = t.get("source_name", "")
     return flat
 
 

@@ -80,11 +80,11 @@ def resolve_playlist(data: dict, user_name: str, playlist_name: str) -> tuple[st
     raise HomeAssistantError(f"Could not resolve playlist URI for '{matched_pl}'.")
 
 
-def resolve_target(data: dict, target_name: str) -> tuple[str, str]:
+def resolve_target(data: dict, target_name: str) -> dict:
     """
-    Find the entity_id for a HomePod target.
+    Find the target config dict by name.
 
-    Returns (resolved_target_name, entity_id).
+    Returns the full target dict (name, spotify_entity_id, homepod_source).
     Raises HomeAssistantError if not found.
     """
     targets = data.get(CONF_TARGETS, [])
@@ -99,8 +99,7 @@ def resolve_target(data: dict, target_name: str) -> tuple[str, str]:
             f"Configured targets: {', '.join(target_names)}"
         )
 
-    target = next(t for t in targets if t["name"] == matched)
-    return matched, target["entity_id"]
+    return next(t for t in targets if t["name"] == matched)
 
 
 async def async_trigger_playback(
@@ -117,7 +116,7 @@ async def async_trigger_playback(
     """
     resolved_user, playlist_uri = resolve_playlist(data, user_name, playlist_name)
 
-    # Resolve playlist display name for response
+    # Resolve playlist display name for speech response
     users = data.get(CONF_USERS, [])
     user = next(u for u in users if u["name"] == resolved_user)
     pl_display = playlist_name
@@ -126,13 +125,31 @@ async def async_trigger_playback(
             pl_display = user[f"playlist_{n}_name"]
             break
 
-    resolved_target, entity_id = resolve_target(data, target_name)
+    target = resolve_target(data, target_name)
+    # Get the user's own Spotify entity
+    users = data.get(CONF_USERS, [])
+    user = next(u for u in users if u["name"] == resolved_user)
+    spotify_entity = user["spotify_entity_id"]
+
+    resolved_target = target["name"]
+    source_name = target.get("source_name", "")
+
+    # Route Spotify to the HomePod, then start the playlist
+    if source_name:
+        await hass.services.async_call(
+            MEDIA_PLAYER_DOMAIN,
+            "select_source",
+            {
+                "entity_id": spotify_entity,
+                "source": source_name,
+            },
+        )
 
     await hass.services.async_call(
         MEDIA_PLAYER_DOMAIN,
         SERVICE_PLAY_MEDIA,
         {
-            "entity_id": entity_id,
+            "entity_id": spotify_entity,
             ATTR_MEDIA_CONTENT_ID: playlist_uri,
             ATTR_MEDIA_CONTENT_TYPE: MEDIA_CONTENT_TYPE_MUSIC,
         },
