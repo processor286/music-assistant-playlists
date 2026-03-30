@@ -1,0 +1,22 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create zip
+        run: |
+          cd custom_components
+          zip -r ../music_assistant_playlists.zip music_assistant_playlists/
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: music_assistant_playlists.zip
