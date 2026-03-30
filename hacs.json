@@ -1,4 +1,6 @@
 {
   "name": "Music Assistant Playlists",
-  "render_readme": true
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "music_assistant_playlists.zip"
 }
