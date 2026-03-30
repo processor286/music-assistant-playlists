@@ -1,0 +1,107 @@
+{
+  "title": "Music Assistant Playlists",
+  "config": {
+    "step": {
+      "user_1": {
+        "title": "User 1",
+        "description": "Enter the first user's name and up to 3 playlists. For each playlist provide the display name (becomes the HomeKit switch name), the playlist name or URI as it appears in Music Assistant, and the MA media player entity to play on.",
+        "data": {
+          "user_name": "User name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_media_id": "Playlist 1 — MA playlist name or URI",
+          "playlist_1_entity_id": "Playlist 1 — MA player",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_media_id": "Playlist 2 — MA playlist name or URI",
+          "playlist_2_entity_id": "Playlist 2 — MA player",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_media_id": "Playlist 3 — MA playlist name or URI",
+          "playlist_3_entity_id": "Playlist 3 — MA player"
+        }
+      },
+      "user_2": {
+        "title": "User 2",
+        "description": "Enter the second user's name and playlists.",
+        "data": {
+          "user_name": "User name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_media_id": "Playlist 1 — MA playlist name or URI",
+          "playlist_1_entity_id": "Playlist 1 — MA player",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_media_id": "Playlist 2 — MA playlist name or URI",
+          "playlist_2_entity_id": "Playlist 2 — MA player",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_media_id": "Playlist 3 — MA playlist name or URI",
+          "playlist_3_entity_id": "Playlist 3 — MA player"
+        }
+      },
+      "user_3": {
+        "title": "User 3",
+        "description": "Enter the third user's name and playlists.",
+        "data": {
+          "user_name": "User name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_media_id": "Playlist 1 — MA playlist name or URI",
+          "playlist_1_entity_id": "Playlist 1 — MA player",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_media_id": "Playlist 2 — MA playlist name or URI",
+          "playlist_2_entity_id": "Playlist 2 — MA player",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_media_id": "Playlist 3 — MA playlist name or URI",
+          "playlist_3_entity_id": "Playlist 3 — MA player"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "user_1": {
+        "title": "User 1",
+        "description": "Update the first user's playlists.",
+        "data": {
+          "user_name": "User name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_media_id": "Playlist 1 — MA playlist name or URI",
+          "playlist_1_entity_id": "Playlist 1 — MA player",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_media_id": "Playlist 2 — MA playlist name or URI",
+          "playlist_2_entity_id": "Playlist 2 — MA player",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_media_id": "Playlist 3 — MA playlist name or URI",
+          "playlist_3_entity_id": "Playlist 3 — MA player"
+        }
+      },
+      "user_2": {
+        "title": "User 2",
+        "description": "Update the second user's playlists.",
+        "data": {
+          "user_name": "User name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_media_id": "Playlist 1 — MA playlist name or URI",
+          "playlist_1_entity_id": "Playlist 1 — MA player",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_media_id": "Playlist 2 — MA playlist name or URI",
+          "playlist_2_entity_id": "Playlist 2 — MA player",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_media_id": "Playlist 3 — MA playlist name or URI",
+          "playlist_3_entity_id": "Playlist 3 — MA player"
+        }
+      },
+      "user_3": {
+        "title": "User 3",
+        "description": "Update the third user's playlists.",
+        "data": {
+          "user_name": "User name",
+          "playlist_1_name": "Playlist 1 — display name",
+          "playlist_1_media_id": "Playlist 1 — MA playlist name or URI",
+          "playlist_1_entity_id": "Playlist 1 — MA player",
+          "playlist_2_name": "Playlist 2 — display name",
+          "playlist_2_media_id": "Playlist 2 — MA playlist name or URI",
+          "playlist_2_entity_id": "Playlist 2 — MA player",
+          "playlist_3_name": "Playlist 3 — display name",
+          "playlist_3_media_id": "Playlist 3 — MA playlist name or URI",
+          "playlist_3_entity_id": "Playlist 3 — MA player"
+        }
+      }
+    }
+  }
+}
